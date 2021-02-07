@@ -13,7 +13,6 @@ import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.Navigation
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -24,7 +23,6 @@ import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
-import com.udacity.project4.locationreminders.reminderslist.ReminderListFragmentDirections
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
@@ -44,7 +42,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
     private var selectedPOI: PointOfInterest? = null
     private var latitude: Double? = null
     private var longitude: Double? = null
-
 
     private val locationManager by lazy {
         requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -131,6 +128,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
         longitude = latLng.longitude
 
         val snippet = getString(R.string.lat_long_snippet, latLng.latitude, latLng.longitude)
+
         googleMap?.moveCamera(
             CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel)
         )
@@ -145,6 +143,9 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
     private fun setPoiClick() {
         googleMap?.setOnPoiClickListener { poi ->
             selectedPOI = poi
+            latitude = poi.latLng.latitude
+            longitude = poi.latLng.longitude
+
             googleMap?.addMarker(
                 MarkerOptions()
                     .position(poi.latLng)
@@ -157,6 +158,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
 
     private fun onMapClick() {
         googleMap?.setOnMapClickListener { latLng ->
+            selectedPOI = null
             addMarker(latLng)
         }
     }
@@ -200,19 +202,22 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
     }
 
     private fun onLocationSelected() {
+        _viewModel.latitude.value = latitude
+        _viewModel.longitude.value = longitude
+
         selectedPOI?.let {
             _viewModel.selectedPOI.value = it
+            _viewModel.reminderSelectedLocationStr.value = it.name
+        } ?: run {
+            if (latitude != null && longitude != null) {
+                _viewModel.reminderSelectedLocationStr.value =
+                    getString(R.string.reminder_lat_long_text, latitude, longitude)
+            }
         }
-        latitude?.let { _viewModel.latitude.value = it }
-        longitude?.let { _viewModel.longitude.value = it }
 
         _viewModel.navigationCommand.postValue(
             NavigationCommand.Back
         )
-
-        //        TODO: When the user confirms on the selected location,
-        //         send back the selected location details to the view model
-        //         and navigate back to the previous fragment to save the reminder and add the geofence
     }
 
 
@@ -221,7 +226,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        // TODO: Change the map type based on the user's selection.
         R.id.normal_map -> {
             googleMap?.mapType = GoogleMap.MAP_TYPE_NORMAL
             true
