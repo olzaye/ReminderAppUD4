@@ -19,13 +19,13 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@id/save_button"
+            app:layout_constraintBottom_toTopOf="@id/saveButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/save_button"
+            android:id="@+id/saveButton"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:text="@string/save"

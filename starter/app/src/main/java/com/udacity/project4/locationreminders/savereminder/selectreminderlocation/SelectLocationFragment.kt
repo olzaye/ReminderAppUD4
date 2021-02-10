@@ -127,7 +127,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
         latitude = latLng.latitude
         longitude = latLng.longitude
 
-        val snippet = getString(R.string.lat_long_snippet, latLng.latitude, latLng.longitude)
+        val snippet = context?.getString(R.string.lat_long_snippet, latLng.latitude, latLng.longitude)
 
         googleMap?.moveCamera(
             CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel)
@@ -135,7 +135,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback, LocationListe
 
         googleMap?.addMarker(
             MarkerOptions().position(latLng)
-                .title(getString(R.string.dropped_pin))
+                .title(context?.getString(R.string.dropped_pin))
                 .snippet(snippet)
         )
     }
