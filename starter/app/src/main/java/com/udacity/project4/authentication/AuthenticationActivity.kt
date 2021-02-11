@@ -8,7 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.AuthUI.IdpConfig
 import com.firebase.ui.auth.IdpResponse
+import com.google.firebase.auth.FirebaseAuth
 import com.udacity.project4.R
+import com.udacity.project4.locationreminders.RemindersActivity
 import kotlinx.android.synthetic.main.activity_authentication.*
 
 
@@ -26,6 +28,11 @@ class AuthenticationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_authentication)
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            startActivity(Intent(this, RemindersActivity::class.java))
+            finish()
+        }
+
         sign_in_button.setOnClickListener {
             startActivityForResult(
                 AuthUI.getInstance().createSignInIntentBuilder()
@@ -45,6 +52,7 @@ class AuthenticationActivity : AppCompatActivity() {
         if (SIGN_IN_REQUEST_CODE == requestCode) {
             val response = IdpResponse.fromResultIntent(data)
             if (resultCode == Activity.RESULT_OK) {
+                startActivity(Intent(this, RemindersActivity::class.java))
                 finish()
             } else {
                 Log.i(TAG, "Sign in unsuccessful ${response?.error?.errorCode}")

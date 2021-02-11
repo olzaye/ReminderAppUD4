@@ -27,7 +27,7 @@ class ReminderListFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =
             DataBindingUtil.inflate(
                 inflater,
@@ -79,10 +79,11 @@ class ReminderListFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.logout -> {
-                if (FirebaseAuth.getInstance().currentUser != null) {
-                    AuthUI.getInstance().signOut(requireContext())
-                } else {
-                    startActivity(Intent(requireActivity(), AuthenticationActivity::class.java))
+                AuthUI.getInstance().signOut(requireContext()).addOnCompleteListener {
+                    activity?.let {
+                        startActivity(Intent(it, AuthenticationActivity::class.java))
+                        it.finish()
+                    }
                 }
             }
         }
@@ -97,11 +98,11 @@ class ReminderListFragment : BaseFragment() {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        _viewModel.isUserLoggedIn.observe(viewLifecycleOwner, { isUserLoggedIn ->
-            menu.findItem(R.id.logout).title =
-                getString(
-                    if (isUserLoggedIn) R.string.logout else R.string.login
-                )
-        })
+//        _viewModel.isUserLoggedIn.observe(viewLifecycleOwner, { isUserLoggedIn ->
+//            menu.findItem(R.id.logout).title =
+//                getString(
+//                    if (isUserLoggedIn) R.string.logout else R.string.login
+//                )
+//        })
     }
 }
