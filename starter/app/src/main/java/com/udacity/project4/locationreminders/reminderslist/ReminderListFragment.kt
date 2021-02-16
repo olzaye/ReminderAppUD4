@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import com.firebase.ui.auth.AuthUI
-import com.google.firebase.auth.FirebaseAuth
 import com.udacity.project4.R
 import com.udacity.project4.authentication.AuthenticationActivity
 import com.udacity.project4.base.BaseFragment
@@ -94,15 +93,5 @@ class ReminderListFragment : BaseFragment() {
         super.onCreateOptionsMenu(menu, inflater)
 //        display logout as menu item
         inflater.inflate(R.menu.main_menu, menu)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-//        _viewModel.isUserLoggedIn.observe(viewLifecycleOwner, { isUserLoggedIn ->
-//            menu.findItem(R.id.logout).title =
-//                getString(
-//                    if (isUserLoggedIn) R.string.logout else R.string.login
-//                )
-//        })
     }
 }
